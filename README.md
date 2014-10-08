@@ -14,7 +14,7 @@ YYeTs (人人影视) 雙語字幕下載器，小小工具、大大方便！
 
 ## 使用方式
 * 找個地方放，例如 `/usr/local/bin`
-* 命令列執行 `yyets-dl <關鍵字>`
+* 命令列執行 `yyets-subdl <關鍵字>`
 
 
 ## MIT License
