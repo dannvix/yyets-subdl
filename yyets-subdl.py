@@ -54,8 +54,14 @@ def extract(files):
         extract_success = False
         with zipfile.ZipFile(filepath) as archive:
             for item in archive.namelist():
-                filename = os.path.split(item)[1].decode('gb2312').encode('utf-8')
+                filename = os.path.split(item)[1]
                 extension = os.path.splitext(filename)[1].lower()
+
+                try: filename = filename.decode('gb2312')
+                except: pass
+
+                try: filename = filename.encode('utf-8')
+                except: pass
 
                 found = False
                 target_lang = u'繁体&英文'.encode('utf-8')
