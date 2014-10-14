@@ -9,6 +9,12 @@ import zipfile
 
 # pip install requests
 import requests
+try:
+    # pip install rarfile
+    # brew install unrar
+    import rarfile
+except ImportError, e:
+    rarfile = None
 
 
 def query(keyword):
@@ -49,10 +55,16 @@ def download(items):
 def extract(files):
     for filepath in files:
         print 'Examining %s' % filepath
-        if not 'zip' in os.path.splitext(filepath)[1].lower():
-            continue
         extract_success = False
-        with zipfile.ZipFile(filepath) as archive:
+        archive = None
+        try:
+            # first we assume it's a Zip archive
+            archive = zipfile.ZipFile(filepath)
+        except zipfile.BadZipfile:
+            # seems not a Zip, let's try RAR
+            # https://rarfile.readthedocs.org/en/latest/api.html
+            archive = rarfile.RarFile(filepath)
+        if archive:
             for item in archive.namelist():
                 filename = os.path.split(item)[1]
                 extension = os.path.splitext(filename)[1].lower()
@@ -71,6 +83,7 @@ def extract(files):
                         shutil.copyfileobj(infile, outfile)
                         extract_success = True
                     print 'Extracted %s' % filename
+            archive.close()
         if extract_success:
             os.remove(filepath)
 
