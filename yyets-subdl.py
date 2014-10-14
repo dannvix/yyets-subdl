@@ -61,9 +61,10 @@ def extract(files):
             # first we assume it's a Zip archive
             archive = zipfile.ZipFile(filepath)
         except zipfile.BadZipfile:
-            # seems not a Zip, let's try RAR
-            # https://rarfile.readthedocs.org/en/latest/api.html
-            archive = rarfile.RarFile(filepath)
+            if rarfile:
+                # seems not a Zip, let's try RAR
+                # https://rarfile.readthedocs.org/en/latest/api.html
+                archive = rarfile.RarFile(filepath)
         if archive:
             for item in archive.namelist():
                 filename = os.path.split(item)[1]
@@ -84,6 +85,8 @@ def extract(files):
                         extract_success = True
                     print 'Extracted %s' % filename
             archive.close()
+        else:
+            print 'Cannot unpack %s' % filename
         if extract_success:
             os.remove(filepath)
 
