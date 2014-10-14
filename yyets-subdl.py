@@ -52,7 +52,7 @@ def download(items):
     return files
 
 
-def extract(files):
+def extract(files, lang='', ext=''):
     for filepath in files:
         print 'Examining %s' % filepath
         extract_success = False
@@ -76,9 +76,8 @@ def extract(files):
                 try: filename = filename.encode('utf-8')
                 except: pass
 
-                found = False
-                target_lang = u'繁体&英文'.encode('utf-8')
-                if ('ass' in extension) and (target_lang in filename):
+                target_lang = lang.encode('utf-8')
+                if (ext in extension) and (target_lang in filename):
                     # zipfile.extract() makes filename escaped with '%xx'
                     with archive.open(item, 'r') as infile, open(filename, 'wb') as outfile:
                         shutil.copyfileobj(infile, outfile)
@@ -101,4 +100,4 @@ if __name__ == '__main__':
     chosen_ids = ask(choices)
     chosens = [choices[idx] for idx in chosen_ids]
     files = download(chosens)
-    extract(files)
+    extract(files, lang=u'繁体&英文', ext='ass')
