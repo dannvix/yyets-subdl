@@ -16,6 +16,22 @@ try:
 except ImportError, e:
     rarfile = None
 
+try:
+    # for colorful terminal
+    # pip install blessings
+    from blessings import Terminal
+except ImportError, e:
+    # fallback
+    class Terminal(object):
+        def __getattr__(self, name):
+            def _missing(*args, **kwargs):
+                return ''.join(args)
+            return _missing
+
+
+# globals
+t = Terminal()
+
 
 def query(keyword):
     request_url = 'http://www.yyets.com/php/search/api'
@@ -32,8 +48,12 @@ def query(keyword):
 
 def ask(choices):
     for idx, choice in enumerate(choices):
-        print '%2d. %s' % (idx+1, choice['title'])
-        print '    %s' % choice['version']
+        num = t.red(str(idx+1).rjust(2))
+        title = t.yellow(choice['title'])
+        version = t.white(choice['version'])
+
+        print '%s. %s' % (num, title)
+        print '    %s' % version
     answers = raw_input('What items do you want? (seperated by commas) [1] ')
     if answers: return map(lambda x: int(x)-1, answers.split(r','))
     else: return [0]
