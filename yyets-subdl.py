@@ -4,11 +4,13 @@
 
 import os
 import sys
+import json
+import urllib
+import urllib2
 import shutil
 import zipfile
 
-# pip install requests
-import requests
+
 try:
     # pip install rarfile
     # brew install unrar
@@ -34,16 +36,14 @@ t = Terminal()
 
 
 def query(keyword):
-    request_url = 'http://www.yyets.com/php/search/api'
-    request_params = dict(keyword=keyword)
-    response = requests.get(request_url, params=request_params)
-    if response.status_code == requests.codes.ok:
-        items = response.json()['data']
-        choices = [x for x in items if x['type'] == 'subtitle']
-        return choices
-    else:
-        raise Exception('HTTP status_code=%s' % response.status_code)
-    return []
+    url = 'http://www.yyets.com/php/search/api'
+    params = urllib.urlencode(dict(keyword=keyword))
+    request = '%s?%s' % (url, params)
+    page = urllib2.urlopen(request).read()
+
+    items = json.loads(page)['data']
+    choices = [x for x in items if x['type'] == 'subtitle']
+    return choices
 
 
 def ask(choices):
@@ -115,6 +115,7 @@ if __name__ == '__main__':
         print 'Usage: %s <keyword>' % sys.argv[0]
         print "Example: %s 'Person of Interest S04E01'" % sys.argv[0]
         sys.exit(1)
+
     keyword = sys.argv[1]
     choices = query(keyword)
     chosen_ids = ask(choices)

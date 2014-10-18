@@ -8,7 +8,7 @@ YYeTs (人人影视) 雙語字幕下載器，小小工具、大大方便！
 
 
 ## 相依性
-* Python [`requests`](http://docs.python-requests.org/en/latest/) 函式庫
+* Python 2.x
 * [`curl`](http://curl.haxx.se/) 工具
 
 
