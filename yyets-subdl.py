@@ -10,6 +10,8 @@ import urllib2
 import shutil
 import zipfile
 
+# PROXY = None
+PROXY = ('proxy.hinet.net', '80')
 
 try:
     # pip install rarfile
@@ -39,7 +41,13 @@ def query(keyword):
     url = 'http://www.yyets.com/php/search/api'
     params = urllib.urlencode(dict(keyword=keyword))
     request = '%s?%s' % (url, params)
-    page = urllib2.urlopen(request).read()
+
+    urlopen = urllib2.urlopen
+    if PROXY:
+        proxy = ':'.join(PROXY)
+        proxy_opener = urllib2.build_opener(urllib2.ProxyHandler(dict(http=proxy)))
+        urlopen = proxy_opener.open
+    page = urlopen(request).read()
 
     items = json.loads(page)['data']
     choices = [x for x in items if x['type'] == 'subtitle']
@@ -60,12 +68,16 @@ def ask(choices):
 
 
 def download(items):
+    proxy_opts = ''
+    if PROXY:
+        proxy_opts = '--proxy http://{host}:{port}'.format(host=PROXY[0], port=PROXY[1])
+
     files = []
     for item in items:
         # item_url = 'http://www.yyets.com/%s/%s' % (item['type'], item['itemid'])
         download_url = 'http://www.yyets.com/%s/index/download?id=%s' % (item['type'], item['itemid'])
         download_filename = '%s.zip' % (item['version'].split(';')[0] or item['title'])
-        command_line = "curl -L '%s' > '%s'" % (download_url, download_filename)
+        command_line = "curl {proxy} -L '{url}' > '{outfile}'".format(proxy=proxy_opts, url=download_url, outfile=download_filename)
         print command_line
         os.system(command_line.encode('utf-8'))
         files.append(download_filename)

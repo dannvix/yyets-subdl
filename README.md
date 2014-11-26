@@ -17,6 +17,11 @@ YYeTs (人人影视) 雙語字幕下載器，小小工具、大大方便！
 * 命令列執行 `yyets-subdl <關鍵字>`
 
 
+## 代理伺服器支援
+* 因應中國地區對人人影视的 [河蟹](http://bbs.hupu.com/11034528.html)
+* 詳見程式碼中 `PROXY` 相關設定
+
+
 ## MIT License
 Copyright (c) 2014 Shao-Chung Chen
 
